@@ -58,6 +58,7 @@ let totalCanaries = [];
 function findCanaries() {
 
     let allElements = document.getElementsByTagName("*");
+    console.log('allElements:', allElements);
 
     for (let j = 1; j < allElements.length; j++) {
 
@@ -69,40 +70,46 @@ function findCanaries() {
         } else {
             foundCanaries = [];
         }
+
+        console.log('tagName:', allElements[j].tagName.toLowerCase());
         
 
         for (let i = 0; i < canaryWords.length; i++) {
             if (allElements[j].textContent.match(canaryWords[i]) != null) {
-            
-            console.log('at the ' + j + ' Element, I found ' + allElements[j].textContent.match(canaryWords[i]))
-            console.log("here's what we're checking against null: " + allElements[j].textContent.match(canaryWords
-            [i]))
-            
-        }
+                console.log('at the ' + j + ' Element, I found ' + allElements[j].textContent.match(canaryWords[i]));
+            }
+
+            if (allElements[j].tagName.toLowerCase() === 'p' || allElements[j].tagName.toLowerCase() === 'span' || allElements[j].tagName.toLowerCase() === 'blockquote')
 
             
-            if (allElements[j].textContent.match(canaryWords[i] != null)
-                && allElements[j].tagName.toLowerCase() === 'span'
+            // if (allElements[j].textContent.match(canaryWords[i] != null)
+            //     && allElements[j].tagName.toLowerCase() === 'span'
 
-                ||
+            //     ||
 
-                allElements[j].textContent.match(canaryWords[i] != null)
-                && allElements[j].tagName.toLowerCase() === 'p'
+            //     allElements[j].textContent.match(canaryWords[i] != null)
+            //     && allElements[j].tagName.toLowerCase() === 'p'
 
-                ||
+            //     ||
 
-                allElements[j].textContent.match(canaryWords[i] != null)
-                && allElements[j].tagName.toLowerCase() === 'blockquote') {
+            //     allElements[j].textContent.match(canaryWords[i] != null)
+            //     && allElements[j].tagName.toLowerCase() === 'blockquote') {
+            {
+                console.log('okay, so it\'s a p, span, or blockquote');
+                if (allElements[j].textContent.match(canaryWords[i]) != null) {
+                    console.log('okay, so not null');
+                    foundCanaries.push(canaryWords[i])
 
-                foundCanaries.push(canaryWords[i])
+                    console.log('foundCanaries:', foundCanaries);
 
-                console.log(foundCanaries)
+                    if (foundCanaries.length > 2) {
+                        changesCounter++;
 
-                if (foundCanaries.length > 2) {
-                    changesCounter++;
-
-                    allElements[j].textContent = cicero1
-                        allElements[j].style = "color : blue;"
+                        allElements[j].textContent = cicero1;
+                        allElements[j].style.color = "blue";
+                    } else {
+                        console.log('did not make it to inner if');
+                    }
                 }
 
                 //     if (changesCounter === 1) {
@@ -131,10 +138,12 @@ function findCanaries() {
                 //     }
 
                 // }
+            } else {
+                console.log('did not make it to outer if');
             }
         }
     }
-    console.log(totalCanaries)
+    console.log('totalCanaries:', totalCanaries);
     if (changesCounter > 0) {
         alert('Say no to fake Latin! \n \n' + changesCounter + ' elements have been altered on this page.')
     }
