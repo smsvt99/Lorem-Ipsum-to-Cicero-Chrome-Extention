@@ -5,98 +5,138 @@ let cicero4 = "et harum quidem rerum facilis est et expedita distinctio. nam lib
 let cicero5 = "itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat."
 
 
-let canaryWords = [/\blorem\b/gi, /\badipiscin\b/gi] 
-
-// "eiusmod", "tempor", "minim", "incididunt", "nostrud", "exercitation", "ullamco", "aliquip", "aute", "anim", "ultricies", "nisl", "imperdiet", "tincidunt", "lobortis", "facilisis", "accumsan", "eleifend", "viverra", "sem", "laoreet", "ullamcorper", "sapien", "augue", "hendrerit", "nibh", "dignissim", "molestie", "dui", "aliquet", "congue", "porttitor", "feugiat", "mattis", "tacimates", "tation", "pri", "pro.", "cum.", "ne.", "ad."]
+let canaryWords = [
+    /\blorem\b/gi,
+    /\bdipiscing\b/gi,
+    /\beiusmod\b/gi,
+    /\btempor\b/gi,
+    /\bminim\b/gi,
+    /\bincididunt\b/gi,
+    /\bnostrud\b/gi,
+    /\bexercitation\b/gi,
+    /\bullamco\b/gi,
+    /\baliquip\b/gi,
+    /\baute\b/gi,
+    /\banim\b/gi,
+    /\bultricies\b/gi,
+    /\bnisl\b/gi,
+    /\bimperdiet\b/gi,
+    /\btincidunt\b/gi,
+    /\blobortis\b/gi,
+    /\bfacilisis\b/gi,
+    /\baccumsan\b/gi,
+    /\beleifend\b/gi,
+    /\bviverra\b/gi,
+    /\bsem\b/gi,
+    /\blaoreet\b/gi,
+    /\bullamcorper\b/gi,
+    /\bsapien\b/gi,
+    /\baugue\b/gi,
+    /\bhendrerit\b/gi,
+    /\bnibh\b/gi,
+    /\bdignissim\b/gi,
+    /\bmolestie\b/gi,
+    /\bdui\b/gi,
+    /\baliquet\b/gi,
+    /\bcongue\b/gi,
+    /\bporttitor\b/gi,
+    /\bfeugiat\b/gi,
+    /\bmattis\b/gi,
+    /\btacimates\b/gi,
+    /\btation\b/gi,
+    /\bpri\b/gi,
+    // /\bpro.\b/gi,
+    // /\bcum.\b/gi,
+    // /\bne.\b/gi,
+    // /\bad.\b/gi
+]
 
 let foundCanaries = []
 let changesCounter = 0;
+let totalCanaries = [];
 
-
-
-// walk(document.body);
-
-// function walk(node) {
-    //I stole this function from here:
-    // https://github.com/panicsteve/cloud-to-butt/blob/master/Source/content_script.js
-
-    // He stole it from here:
-    // http://is.gd/mwZp7E
-
-    // var child, next;
-
-    // 	if (
-    //         node.tagName.toLowerCase() == 'input' || 
-    //         node.tagName.toLowerCase() == 'textarea'
-    //         || node.classList.indexOf('ace_editor') > -1
-    // ){
-    // 		return;
-    // 	}
-
-//     switch (node.nodeType) {
-//         case 1:  // Element
-//         case 9:  // Document
-//         case 11: // Document fragment
-//             child = node.firstChild;
-//             while (child) {
-//                 next = child.nextSibling;
-//                 walk(child);
-//                 child = next;
-
-//             } break;
-
-//         case 3: // Text node
-//             findCanaries(node);
-//             break;
-//     }
-// }
-
-function handleText(textNode) {
-
-    var v = textNode.nodeValue;
-
-    v = v.replace(/\blorem ipsum\b/g, "dolorem ipsum");
-    v = v.replace(/\bLoreum ipsum\b/g, "Dolorem ipsum");
-    v = v.replace(/\blorem Ipsum\b/g, "dolorem Ipsum");
-    v = v.replace(/\bLorem Ipsum\b/g, "Dolorem Ipsum");
-
-    textNode.nodeValue = v;
-}
 function findCanaries() {
+
     let allElements = document.getElementsByTagName("*");
+
     for (let j = 1; j < allElements.length; j++) {
-        foundCanaries = [];
-    for (let i = 0; i < canaryWords.length; i++) {
-        if (allElements[j].textContent.includes(canaryWords[i])
-            && allElements[j].tagName.toLowerCase() === 'span'
-            
-            ||
-            
-            allElements[j].textContent.includes(canaryWords[i])
-            && allElements[j].tagName.toLowerCase() === 'p'
 
-            ||
+        if (foundCanaries.length > 0) {
+            console.log("pushing to foundCanaries!")
+            totalCanaries.push(foundCanaries)
+            foundCanaries = [];
 
-            allElements[j].textContent.includes(canaryWords[i])
-            && allElements[j].tagName.toLowerCase() === 'blockquote') {
-                        
+        } else {
+            foundCanaries = [];
+        }
+        
+
+        for (let i = 0; i < canaryWords.length; i++) {
+            if (allElements[j].textContent.match(canaryWords[i]) != null) {
+            
+            console.log('at the ' + j + ' Element, I found ' + allElements[j].textContent.match(canaryWords[i]))
+            console.log("here's what we're checking against null: " + allElements[j].textContent.match(canaryWords
+            [i]))
+            
+        }
+
+            
+            if (allElements[j].textContent.match(canaryWords[i] != null)
+                && allElements[j].tagName.toLowerCase() === 'span'
+
+                ||
+
+                allElements[j].textContent.match(canaryWords[i] != null)
+                && allElements[j].tagName.toLowerCase() === 'p'
+
+                ||
+
+                allElements[j].textContent.match(canaryWords[i] != null)
+                && allElements[j].tagName.toLowerCase() === 'blockquote') {
+
                 foundCanaries.push(canaryWords[i])
 
-            if (foundCanaries.length > 2) {
-                changesCounter++;
-                switch (changesCounter){
-                    case 1 : allElements[j].textContent = cicero1;
-                    case 2 : allElements[j].textContent = cicero2;
-                    case 3 : allElements[j].textContent = cicero3;
-                    case 4 : allElements[j].textContent = cicero4;
-                    case 5 : allElements[j].textContent = cicero5;
-            }
+                console.log(foundCanaries)
+
+                if (foundCanaries.length > 2) {
+                    changesCounter++;
+
+                    allElements[j].textContent = cicero1
+                        allElements[j].style = "color : blue;"
+                }
+
+                //     if (changesCounter === 1) {
+                //         allElements[j].textContent = cicero1
+                //         allElements[j].style = "color : blue;"
+                //     }
+
+                //     if (changesCounter === 2) {
+                //         allElements[j].textContent = cicero2
+                //         allElements[j].style = "color : blue;"
+                //     }
+
+                //     if (changesCounter === 3) {
+                //         allElements[j].textContent = cicero3
+                //         allElements[j].style = "color : blue;"
+                //     }
+
+                //     if (changesCounter === 4) {
+                //         allElements[j].textContent = cicero4
+                //         allElements[j].style = "color : blue;"
+                //     }
+
+                //     if (changesCounter === 5) {
+                //         allElements[j].textContent = cicero5
+                //         allElements[j].style = "color : blue;"
+                //     }
+
+                // }
             }
         }
     }
-}
-if (changesCounter > 0) {
-    alert('Say no to fake Latin! \n \n' + changesCounter + ' elements have been altered on this page.')
-}
+    console.log(totalCanaries)
+    if (changesCounter > 0) {
+        alert('Say no to fake Latin! \n \n' + changesCounter + ' elements have been altered on this page.')
+    }
 }
 findCanaries();
